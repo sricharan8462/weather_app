@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -28,6 +29,22 @@ class WeatherHomePage extends StatefulWidget {
 
 class _WeatherHomePageState extends State<WeatherHomePage> {
   final TextEditingController _cityController = TextEditingController();
+  String _city = "";
+  String _temperature = "";
+  String _condition = "";
+
+  void fetchWeather() {
+    final Random random = Random();
+    int temp = 15 + random.nextInt(16); // Random temperature between 15-30°C
+    List<String> conditions = ["Sunny", "Cloudy", "Rainy"];
+    String condition = conditions[random.nextInt(conditions.length)];
+
+    setState(() {
+      _city = _cityController.text;
+      _temperature = "$temp°C";
+      _condition = condition;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +64,13 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: fetchWeather,
               child: const Text("Fetch Weather"),
             ),
             const SizedBox(height: 20),
-            const Text("City: ", style: TextStyle(fontSize: 20)),
-            const Text("Temperature: ", style: TextStyle(fontSize: 20)),
-            const Text("Condition: ", style: TextStyle(fontSize: 20)),
+            Text("City: $_city", style: const TextStyle(fontSize: 20)),
+            Text("Temperature: $_temperature", style: const TextStyle(fontSize: 20)),
+            Text("Condition: $_condition", style: const TextStyle(fontSize: 20)),
           ],
         ),
       ),
