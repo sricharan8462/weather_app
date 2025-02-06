@@ -32,7 +32,9 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
   String _city = "";
   String _temperature = "";
   String _condition = "";
+  List<String> _weeklyForecast = [];
 
+  /// Function to fetch simulated weather data for the entered city
   void fetchWeather() {
     final Random random = Random();
     int temp = 15 + random.nextInt(16); // Random temperature between 15-30°C
@@ -43,6 +45,22 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
       _city = _cityController.text;
       _temperature = "$temp°C";
       _condition = condition;
+      _weeklyForecast =
+          []; // Reset weekly forecast when fetching current weather
+    });
+  }
+
+  /// Function to fetch a 7-day simulated weather forecast
+  void fetchWeeklyForecast() {
+    final Random random = Random();
+    List<String> conditions = ["Sunny", "Cloudy", "Rainy"];
+
+    setState(() {
+      _weeklyForecast = List.generate(7, (index) {
+        int temp = 15 + random.nextInt(16);
+        String condition = conditions[random.nextInt(conditions.length)];
+        return "Day ${index + 1}: $temp°C, $condition";
+      });
     });
   }
 
@@ -53,7 +71,8 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TextField(
               controller: _cityController,
@@ -68,9 +87,27 @@ class _WeatherHomePageState extends State<WeatherHomePage> {
               child: const Text("Fetch Weather"),
             ),
             const SizedBox(height: 20),
-            Text("City: $_city", style: const TextStyle(fontSize: 20)),
-            Text("Temperature: $_temperature", style: const TextStyle(fontSize: 20)),
-            Text("Condition: $_condition", style: const TextStyle(fontSize: 20)),
+            if (_city.isNotEmpty) ...[
+              Text("City: $_city",
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
+              Text("Temperature: $_temperature",
+                  style: const TextStyle(fontSize: 18)),
+              Text("Condition: $_condition",
+                  style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 20),
+            ],
+            ElevatedButton(
+              onPressed: fetchWeeklyForecast,
+              child: const Text("Get 7-Day Forecast"),
+            ),
+            const SizedBox(height: 20),
+            if (_weeklyForecast.isNotEmpty) ...[
+              const Text("7-Day Forecast:",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              ..._weeklyForecast.map((dayForecast) =>
+                  Text(dayForecast, style: const TextStyle(fontSize: 16))),
+            ],
           ],
         ),
       ),
